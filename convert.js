@@ -1,8 +1,7 @@
-function containMoney(element) {
-    return element.innerHTML.includes("€");
-}
+let containMoney = (element) => element.innerHTML.includes("€");
 
-function convertPrice(){
+let convertPrice = () => {
+    // Get all the element with price inside
     /*var p = document.getElementsByTagName("p");
     var span = document.getElementsByTagName("span");
 
@@ -12,9 +11,8 @@ function convertPrice(){
         }
     }*/
 
-
-    browser.storage.local.get('rev', function(element){
-        var moneyperday = element.rev/22;
+    browser.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month'], function(element){
+        var moneyperday = element.pricetoday_rev/22;
         var moneyperhour = moneyperday/8;
 
         var amazon = document.getElementById("price");
@@ -41,7 +39,8 @@ function convertPrice(){
         newNode.className = "product-price PriceToDay";
         newNode.id = "PriceToDay";
 
-        var dayprice = "<div class=\"product-price-current\" style=\"display: inline-block; margin-bottom: 10px; font-size: 25px; background: rgba(255, 40,40, 0.1); border-radius: 10px; padding: 5px 10px;\"><span class=\"product-price-value a-size-medium\" style=\"color: #ff6666\">~ ";
+        var dayprice = "<div class=\"product-price-current\" style=\"box-shadow: 0 7px 20px -5px rgba(0,0,0,0.2); display: inline-block; margin-bottom: 10px; font-size: 25px; background: white; border-radius: 20px; padding: 5px 15px;\">"
+                        +   "<span class=\"product-price-value a-size-medium\" style=\"display: flex; align-items: center; color: #ff6666\">";
         
         for(var i = 0; i < parts.length; i++){
             var perday = (parseFloat(parts[i]) / moneyperday);
@@ -54,22 +53,22 @@ function convertPrice(){
             var minuti = minuti_totali-ore*60
 
             if(perday < 1){
-                price = (parseFloat(parts[i]) / moneyperhour).toFixed(2) + " <span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\"> ore di lavoro </span>";
+                price = (parseFloat(parts[i]) / moneyperhour).toFixed(2) + " <span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">ore </span>";
             }else if(perday > 29){
                 var giorni = intera % 30;
                 var mesi = Math.floor(intera/30);
 
                 price = mesi
                 + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">mesi </span>"
-                + giorni
-                + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">gg </span>"
-                + (ore).toFixed(0) +"."+ (minuti).toFixed(0)
-                + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">h </span>";
+                + "<span style=\"font-size: 12px; margin-top: 5px; padding-left: 5px;\">" + giorni + "</span>"
+                + "<span class=\"selection\" style=\"margin-top: 5px; font-size: 12px; color: black; padding: 0 5px;\">gg </span>"
+                + "<span style=\"font-size: 12px; margin-top: 5px; padding-left: 5px;\">" + (ore).toFixed(0) +"."+ (minuti).toFixed(0) + "</span>"
+                + "<span class=\"selection\" style=\"margin-top: 5px; font-size: 12px; color: black; padding: 0 5px;\">ore </span>";
             }else{
                 price = intera
                 + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">gg </span>"
-                + (ore).toFixed(0) +"."+ (minuti).toFixed(0)
-                + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">h </span>";
+                + "<span style=\"font-size: 12px; margin-top: 5px; padding-left: 5px;\">" + (ore).toFixed(0) +"."+ (minuti).toFixed(0) + "</span>"
+                + "<span class=\"selection\" style=\"margin-top: 5px; font-size: 12px; color: black; padding: 0 5px;\">ore </span>";
             }
     
             dayprice += price;
@@ -79,7 +78,7 @@ function convertPrice(){
             }
         }
     
-        dayprice += "<span class=\"selection\" style=\"font-size: 13px; color: #333; padding-left: 10px;\"> di lavoro </span></div>";
+        dayprice += "<span class=\"selection\" style=\"font-size: 13px; color: #333; padding-left: 10px; \"> di lavoro </span></div>";
     
         newNode.innerHTML = "";
         newNode.innerHTML = dayprice;
@@ -92,15 +91,10 @@ function convertPrice(){
     });
 }
 
-document.addEventListener('click', function(evt) {
-    convertPrice();
-}, false);
+// Event to get all the version product change on the page
+document.addEventListener('click', (evt) => convertPrice() , false);
+
+// Update the price every 5000 
+setInterval(() => convertPrice() , 5000)
 
 convertPrice();
-
-setInterval(function(){
-    convertPrice();
-}, 3000)
-
-
-

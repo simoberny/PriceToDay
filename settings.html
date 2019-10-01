@@ -2,20 +2,52 @@
 <html>
     <head>  
         <meta charset="utf-8" />  
-        <title>Price to Labour day</title>  
+        <title>Price 💰 to Working Day</title>  
         <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
     </head>
     <body>
+        <h1>PriceToDay</h1>
+        <h3>Price 💰 -> Working Day</h3>
+
         <div id="saved">
-            <h2>Actual revenue: </h2> <h2 id="saved-rev"></h2>
+            <h3>Guadagno mensile: </h3> <h2 id="saved-rev">Non settato</h2>
         </div>
 
         <div id="container">
-            <label class="title">Enter your monthly revenue</label>
-            <form id="revenue" action="#">      
-                <input type="text" id="rev-input" placeholder="Monthly revenue...">      
-                <button type="submit">Save</button>   
-            </form>
+            <div class="line">
+                <label class="title">Part Time (20 ore)</label>
+                <label class="switch">
+                    <input type="checkbox" id="parttime" class="checks">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="line">
+                <label class="title">Abilitare mesi</label>
+                <label class="switch">
+                    <input type="checkbox" id="month" class="checks">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <div class="line">
+                <label class="title">Nascondi prezzo</label>
+                <label class="switch">
+                    <input type="checkbox" id="noprice" class="checks">
+                    <span class="slider round"></span>
+                </label>
+            </div>
+            <!--<div class="line">
+                <label class="title">Dark</label>
+                <label class="switch">
+                    <input type="checkbox" id="dark" class="checks">
+                    <span class="slider round"></span>
+                </label>
+            </div>-->
+            <div class="line">
+                <form id="revenue" action="#">      
+                    <input type="text" id="rev-input" placeholder="Guadagno mensile...">      
+                    <button type="submit">Save</button>   
+                </form>
+            </div>
         </div>
         <script src="main.js"></script>
     </body>
