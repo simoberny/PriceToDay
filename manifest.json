@@ -1,0 +1,32 @@
+{
+    "manifest_version": 2,
+    "name": "PriceToDay",
+    "version": "1.0",
+  
+    "description": "Convert the site prices in lavorative job day, based on personal month revenue :)",
+
+    "browser_action": {
+        "browser_style": true,
+        "default_popup": "settings.html",
+        "default_icon": {
+          "16": "icons/48.png"
+        }
+      },
+    
+    "permissions": [
+    "storage"
+    ],
+
+    "icons": {
+      "48": "icons/48.png"
+    },
+  
+    "content_scripts": [
+      {
+        "matches": ["*://*.aliexpress.com/*", "*://*.amazon.com/*",  "*://*.amazon.it/*", "*://*.gearbest.com/*", "*://*.gearbest.it/*"],
+        "js": ["convert.js"]
+      }
+    ]
+    
+  
+  }
