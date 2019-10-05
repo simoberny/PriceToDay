@@ -24,7 +24,7 @@
   
     "content_scripts": [
       {
-        "matches": ["*://*.aliexpress.com/*", "*://*.amazon.com/*",  "*://*.amazon.it/*", "*://*.gearbest.com/*", "*://*.gearbest.it/*"],
+        "matches": ["*://*.aliexpress.com/*", "*://*.amazon.com/*",  "*://*.amazon.it/*", "*://*.ebay.com/*", "*://*.ebay.it/*"],
         "js": ["convert.js"]
       }
     ]
