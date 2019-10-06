@@ -14,20 +14,18 @@
       },
     
     "permissions": [
-    "storage"
+      "storage"
     ],
 
     "icons": {
       "48": "icons/48.png",
       "96": "icons/96.png"
     },
-  
+
     "content_scripts": [
       {
         "matches": ["*://*.aliexpress.com/*", "*://*.amazon.com/*",  "*://*.amazon.it/*", "*://*.ebay.com/*", "*://*.ebay.it/*"],
         "js": ["convert.js"]
       }
     ]
-    
-  
   }

@@ -7,7 +7,7 @@ var form = document.getElementById("revenue");
 var checks = document.getElementsByClassName("checks");
 
 let updateSettings = () => {
-    browser.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark']).then((elemt) => {
+    chrome.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark']).then((elemt) => {
         if(elemt.pricetoday_rev != null)
             document.getElementById("saved-rev").innerHTML = elemt.pricetoday_rev;
 
@@ -19,7 +19,7 @@ let updateSettings = () => {
 }
 
 let saveRevenue = (rev) => { 
-    browser.storage.local.set({'pricetoday_rev': rev})
+    chrome.storage.local.set({'pricetoday_rev': rev})
     location.reload(); 
 }
 
@@ -35,7 +35,8 @@ Array.from(checks).forEach((element) => {
 });
 
 onCheckChange = (event) => {
-    browser.storage.local.set({[`pricetoday_${event.target.id}`]: event.target.checked})
+    chrome.storage.local.set({[`pricetoday_${event.target.id}`]: event.target.checked})
+    convertPrice();
 }
 
 updateSettings();

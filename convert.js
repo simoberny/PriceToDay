@@ -1,116 +1,130 @@
-// Prototype for a future version
+let prevStore = null;
+let stores = ["amazon", "aliexpress", "ebay"];
+
 let containMoney = (element) => element.innerHTML.includes("€");
 
 let isNumber = (n) => !isNaN(parseFloat(n))
 
-let convertPrice = () => {
-    // Prototype for a future version
-    // Get all the element with price inside
-    /*var p = document.getElementsByTagName("p");
-    var span = document.getElementsByTagName("span");
+let getSite = (url) => {
+    let match = (/https?.*?(\w{4,})(?=(?:\.\w{2,3})+)/g).exec(url);
+    if(match != null) return match[1];
+}
 
-    for(var i = 0; i < span.length; i++){
-        if(span[i].innerHTML.includes("€")){
-            console.log(span[i].innerHTML);
-        }
-    }*/
+// Domain check for chrome extension
+let checkAndConvert = () => {
+    let match = getSite(window.location);
+    if(stores.includes(match))
+        convertPrice(match);
+}
+
+let convertPrice = (match) => {
+    let daily_hour = 8;
 
     // Popular sites DOM element to append our price
     var amazon = document.getElementById("price");
     var ali = document.getElementsByClassName("product-price")[0];
     var ebay = document.getElementById("vi-mskumap-none");
 
-    var getUrl = window.location;
+    var sites = [amazon, ali, ebay];
 
-    var urlRegEx = /https?.*?(\w{4,})(?=(?:\.\w{2,3})+)/g;
-    var match = urlRegEx.exec(getUrl)[1];
+    let style = "";
 
-    browser.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {
-        // Daily revenue
-        var moneyperday = store.pricetoday_rev/22;
-        // Hour revenue
-        var moneyperhour = moneyperday/8;
+    chrome.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {
+        console.log(store);
+
+
+        if(store.pricetoday_parttime) daily_hour = 4;
+
+        sites.forEach((site) => {
+            if(site != null) 
+                site.style.display = (store.pricetoday_noprice) ? "none" : "block"
+        });
+        
+        var moneyperday = store.pricetoday_rev/22; // Daily revenue
+        var moneyperhour = moneyperday/daily_hour; // Hour revenue
 
         switch(match){
             case "amazon":
                 var itemPrice = document.getElementById("priceblock_ourprice").innerHTML;
-                var parts = itemPrice.replace(/\./g, "").substring(0, itemPrice.length-2).split(" ");
+                var parts = itemPrice.replace(/\./g, "").split(" ").filter(isNumber);
+                style = "border: 2px solid #88aaaa; color: #88aaaa;";
             break;
 
-            case "ebay": 
+            case "ebay":
                 var itemPrice = document.getElementById("prcIsum").innerHTML;
-                //var parts = parseInt(itemPrice.replace(/\./g, "").substring(4, itemPrice.length).split(" "));
                 var parts = itemPrice.replace(/\./g, "").split(" ").filter(isNumber);
+                style = "border: 2px solid #2255dd; color: #2255dd;";
             break;
 
             case "aliexpress":
                 var itemsPrice = document.getElementsByClassName("product-price-value")[0].innerHTML;            
                 var parts = itemsPrice.replace(/\./g, "").substr(2,itemsPrice.length).split(" - ");
+                style = "border: 2px solid #ff6666; color: #ff6666;";
             break;
 
-            default:
-                site_fallback();
+            default: site_fallback();
         }
 
-        var newNode = null;
-
-        if(document.getElementById("PriceToDay") != null){
-            var elem = document.getElementById("PriceToDay");
-            elem.parentNode.removeChild(elem);
-        }
-
-        newNode = document.createElement('div');
-        newNode.className = "product-price PriceToDay";
-        newNode.id = "PriceToDay";
-
-        var dayprice = "<div class=\"product-price-current\" style=\"box-shadow: 0 7px 20px -5px rgba(0,0,0,0.2); display: inline-block; margin-bottom: 10px; font-size: 25px; background: white; border-radius: 20px; border: 2px solid #ff6666; padding: 5px 15px;\">"
-                        +   "<span class=\"product-price-value a-size-medium\" style=\"display: flex; align-items: center; color: #ff6666\">";
+        // Create content
+        var dayprice = "<div class=\"product-price-current\" style=\"box-shadow: 0 7px 20px -6px rgba(0,0,0,0.2); display: inline-block; margin: 10px 0; font-size: 25px; background: white; border-radius: 30px; padding: 5px 15px;" + style + "\">"
+                        + "<span class=\"product-price-value\" style=\"display: flex; align-items: center; font-weight: 600;\">";
         
-        for(var i = 0; i < parts.length; i++){
+        if(store.pricetoday_rev){
+            for(var i = 0; i < parts.length; i++){
+                if(isNumber(parts[i])){
+                    var dayofwork = (parseFloat(parts[i]) / moneyperday);
+
+                    var intera = Math.floor(dayofwork);
+                    var decimal = dayofwork - intera;
+                    var minuti_totali = decimal*daily_hour*60;
+                    var ore = Math.floor(minuti_totali/60);
+                    var minuti = minuti_totali-ore*60; 
+                    var giorni = intera % 22; // 22 day of work
+                    var mesi = Math.floor(intera/22);
+        
+                    if(dayofwork < 1){
+                        price = (parseFloat(parts[i]) / moneyperhour).toFixed(2) + " <span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">ore </span>";
+                    }else if(dayofwork > 29 && store.pricetoday_month){
+                        price = mesi
+                        + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">mesi </span>"
+                        + "<span style=\"font-size: 14px; padding-left: 5px;\">" + giorni + "</span>"
+                        + "<span class=\"selection\" style=\" font-size: 12px; color: black; padding: 0 5px;\">gg </span>"
+                        + "<span style=\"font-size: 14px;  padding-left: 5px;\">" + (ore).toFixed(0) +"."+ (minuti).toFixed(0) + "</span>"
+                        + "<span class=\"selection\" style=\" font-size: 12px; color: black; padding: 0 5px;\">ore </span>";
+                    }else{
+                        price = intera
+                        + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">gg </span>"
+                        + "<span style=\"font-size: 14px;  padding-left: 5px;\">" + (ore).toFixed(0) +"."+ (minuti).toFixed(0) + "</span>"
+                        + "<span class=\"selection\" style=\" font-size: 12px; color: black; padding: 0 5px;\">ore </span>";
+                    }
             
-            if(!isNaN(parseFloat(parts[i]))){
-                var perday = (parseFloat(parts[i]) / moneyperday);
-
-                var intera = Math.floor(perday);
-                var decimal = perday - intera;
-                var minuti_totali = decimal*8*60;
-    
-                var ore = Math.floor(minuti_totali/60)
-                var minuti = minuti_totali-ore*60
-    
-                if(perday < 1){
-                    price = (parseFloat(parts[i]) / moneyperhour).toFixed(2) + " <span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">ore </span>";
-                }else if(perday > 29){
-                    var giorni = intera % 30;
-                    var mesi = Math.floor(intera/30);
-    
-                    price = mesi
-                    + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">mesi </span>"
-                    + "<span style=\"font-size: 12px; margin-top: 5px; padding-left: 5px;\">" + giorni + "</span>"
-                    + "<span class=\"selection\" style=\"margin-top: 5px; font-size: 12px; color: black; padding: 0 5px;\">gg </span>"
-                    + "<span style=\"font-size: 12px; margin-top: 5px; padding-left: 5px;\">" + (ore).toFixed(0) +"."+ (minuti).toFixed(0) + "</span>"
-                    + "<span class=\"selection\" style=\"margin-top: 5px; font-size: 12px; color: black; padding: 0 5px;\">ore </span>";
-                }else{
-                    price = intera
-                    + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">gg </span>"
-                    + "<span style=\"font-size: 12px; margin-top: 5px; padding-left: 5px;\">" + (ore).toFixed(0) +"."+ (minuti).toFixed(0) + "</span>"
-                    + "<span class=\"selection\" style=\"margin-top: 5px; font-size: 12px; color: black; padding: 0 5px;\">ore </span>";
-                }
-        
-                dayprice += price;
-        
-                if(i != parts.length-1){
-                    dayprice += "<span style=\"color: #555; padding: 0 10px;\"> / </span>";
+                    dayprice += price;
+            
+                    if(i != parts.length-1){
+                        dayprice += "<span style=\"color: #555; padding: 0 10px;\"> / </span>";
+                    }
                 }
             }
+
+            dayprice += "<span class=\"selection\" style=\"font-size: 13px; color: #333; padding-left: 10px; \"> di lavoro </span></div>";
+        }else{
+            dayprice += "Guadagno mensile non settato!";
         }
     
-        dayprice += "<span class=\"selection\" style=\"font-size: 13px; color: #333; padding-left: 10px; \"> di lavoro </span></div>";
-    
-        newNode.innerHTML = "";
+        var newNode = null;
+
+        // Create new element and inject content
+        if(document.getElementById("PriceToDay") == null){
+            newNode = document.createElement('div');
+            newNode.className = "PriceToDay";
+            newNode.id = "PriceToDay";
+        }else{
+            newNode = document.getElementById("PriceToDay");
+        }
+
         newNode.innerHTML = dayprice;
 
-        // Get the reference node
+        // Reference node
         var referenceNode =  amazon || ali || ebay;
     
         // Insert the new node before the reference node
@@ -118,14 +132,31 @@ let convertPrice = () => {
     });
 }
 
-let site_fallback = () => {
-    console.log("Not yet implemented!");
+// Check diff in the storage settings trigger
+let checkDiff = () => {
+    chrome.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {
+        let acc = 0;
+
+        for(var key in store)
+            if(prevStore != null && store[key] !== prevStore[key]) acc++
+
+        if(acc > 0) convertPrice();
+
+        prevStore = store;
+    });
 }
 
+let site_fallback = () => console.log("Not yet implemented!");
+
 // Event to get all the version product change on the page
-document.addEventListener('click', (evt) => convertPrice() , false);
+document.addEventListener('click', (evt) => {
+    checkAndConvert();
 
-// Update the price every 5000 
-setInterval(() => convertPrice() , 5000)
+    // Timeout trick for Amazon website
+    if(getSite(window.location) == "amazon") setTimeout(() => checkAndConvert(), 2000)
+}, false);
 
-convertPrice();
+// Settings change listener
+setInterval(() => checkDiff() , 1000)
+
+checkAndConvert();

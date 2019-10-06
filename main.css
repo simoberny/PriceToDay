@@ -9,6 +9,7 @@ body {
     background-size: 20%;
     background-repeat: no-repeat;
     background-position: 95% 5%;
+    width: 300px;
 }
 
 #saved, #container {
@@ -62,8 +63,10 @@ button {
     /* This gives our button rounded edges */
     font-size: 12px;
     border: none;
-    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.302), 0 1px 3px 1px rgba(60, 64, 67, 0.149);
+    box-shadow: 0 1px 2px 0 rgba(60, 64, 67, 0.202), 0 1px 3px 1px rgba(60, 64, 67, 0.149);
     cursor: pointer;
+    background: #2196F3;
+    color: white;
 }
 
 form {
