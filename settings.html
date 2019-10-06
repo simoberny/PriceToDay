@@ -10,26 +10,26 @@
         <h3>Price 💰 -> Working Day</h3>
 
         <div id="saved">
-            <h3>Guadagno mensile: </h3> <h2 id="saved-rev">Non settato</h2>
+            <h3 data-l10n-id="revenue">Guadagno mensile: </h3> <h2 id="saved-rev" data-l10n-id="notsetted">Non settato</h2>
         </div>
 
         <div id="container">
             <div class="line">
-                <label class="title">Part Time (20 ore)</label>
+                <label class="title">Part Time (20h)</label>
                 <label class="switch">
                     <input type="checkbox" id="parttime" class="checks">
                     <span class="slider round"></span>
                 </label>
             </div>
             <div class="line">
-                <label class="title">Abilitare mesi</label>
+                <label class="title" data-l10n-id="month">Abilitare mesi</label>
                 <label class="switch">
                     <input type="checkbox" id="month" class="checks">
                     <span class="slider round"></span>
                 </label>
             </div>
             <div class="line">
-                <label class="title">Nascondi prezzo</label>
+                <label class="title" data-l10n-id="hideprice">Nascondi prezzo</label>
                 <label class="switch">
                     <input type="checkbox" id="noprice" class="checks">
                     <span class="slider round"></span>
@@ -44,7 +44,7 @@
             </div>-->
             <div class="line">
                 <form id="revenue" action="#">      
-                    <input type="text" id="rev-input" placeholder="Guadagno mensile...">      
+                    <input type="text" id="rev-input" data-l10n-id="input-rev" placeholder="Guadagno mensile...">      
                     <button type="submit">Save</button>   
                 </form>
             </div>

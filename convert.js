@@ -1,3 +1,19 @@
+let locale_string = {
+    "en": {
+      "month": "month",
+      "hour": "hours",
+      "work": "of work",
+      "setted": "Revenue not setted!"
+    },
+    "it": {
+      "month": "mesi",
+      "hour": "ore",
+      "work": "di lavoro",
+      "setted": "Guadagno non settato!"
+    }
+}
+
+let userlang = "en";
 let prevStore = null;
 let stores = ["amazon", "aliexpress", "ebay"];
 
@@ -24,6 +40,8 @@ let convertPrice = (match) => {
     var ebay = document.getElementById("vi-mskumap-none");
 
     var sites = [amazon, ali, ebay];
+
+    let locale = (navigator.language || navigator.userLanguage).split("-")[0] || "en";
 
     let style = "";
 
@@ -81,19 +99,19 @@ let convertPrice = (match) => {
                     var mesi = Math.floor(intera/22);
         
                     if(dayofwork < 1){
-                        price = (parseFloat(parts[i]) / moneyperhour).toFixed(2) + " <span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">ore </span>";
+                        price = (parseFloat(parts[i]) / moneyperhour).toFixed(2) + " <span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">" + locale_string[locale].hour + "</span>";
                     }else if(dayofwork > 29 && store.pricetoday_month){
                         price = mesi
-                        + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">mesi </span>"
+                        + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\"> " + locale_string[locale].month + "</span>"
                         + "<span style=\"font-size: 14px; padding-left: 5px;\">" + giorni + "</span>"
                         + "<span class=\"selection\" style=\" font-size: 12px; color: black; padding: 0 5px;\">gg </span>"
                         + "<span style=\"font-size: 14px;  padding-left: 5px;\">" + (ore).toFixed(0) +"."+ (minuti).toFixed(0) + "</span>"
-                        + "<span class=\"selection\" style=\" font-size: 12px; color: black; padding: 0 5px;\">ore </span>";
+                        + "<span class=\"selection\" style=\" font-size: 12px; color: black; padding: 0 5px;\">" + locale_string[locale].hour + " </span>";
                     }else{
                         price = intera
                         + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">gg </span>"
                         + "<span style=\"font-size: 14px;  padding-left: 5px;\">" + (ore).toFixed(0) +"."+ (minuti).toFixed(0) + "</span>"
-                        + "<span class=\"selection\" style=\" font-size: 12px; color: black; padding: 0 5px;\">ore </span>";
+                        + "<span class=\"selection\" style=\" font-size: 12px; color: black; padding: 0 5px;\">" + locale_string[locale].hour + " </span>";
                     }
             
                     dayprice += price;
@@ -104,9 +122,9 @@ let convertPrice = (match) => {
                 }
             }
 
-            dayprice += "<span class=\"selection\" style=\"font-size: 13px; color: #333; padding-left: 10px; \"> di lavoro </span></div>";
+            dayprice += "<span class=\"selection\" style=\"font-size: 13px; color: #333; padding-left: 10px; \"> " + locale_string[locale].work + " </span></div>";
         }else{
-            dayprice += "Guadagno mensile non settato!";
+            dayprice += locale_string[locale].setted;
         }
 
         // Reference node
