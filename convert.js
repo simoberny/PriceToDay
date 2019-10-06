@@ -1,8 +1,6 @@
 let prevStore = null;
 let stores = ["amazon", "aliexpress", "ebay"];
 
-let containMoney = (element) => element.innerHTML.includes("€");
-
 let isNumber = (n) => !isNaN(parseFloat(n))
 
 let getSite = (url) => {
@@ -45,19 +43,19 @@ let convertPrice = (match) => {
 
         switch(match){
             case "amazon":
-                var itemPrice = document.getElementById("priceblock_ourprice").innerHTML;
+                var itemPrice = document.getElementById("priceblock_ourprice").textContent;
                 var parts = itemPrice.replace(/\./g, "").split(" ").filter(isNumber);
                 style = "border: 2px solid #88aaaa; color: #88aaaa;";
             break;
 
             case "ebay":
-                var itemPrice = document.getElementById("prcIsum").innerHTML;
+                var itemPrice = document.getElementById("prcIsum").textContent;
                 var parts = itemPrice.replace(/\./g, "").split(" ").filter(isNumber);
                 style = "border: 2px solid #2255dd; color: #2255dd;";
             break;
 
             case "aliexpress":
-                var itemsPrice = document.getElementsByClassName("product-price-value")[0].innerHTML;            
+                var itemsPrice = document.getElementsByClassName("product-price-value")[0].textContent;            
                 var parts = itemsPrice.replace(/\./g, "").substr(2,itemsPrice.length).split(" - ");
                 style = "border: 2px solid #ff6666; color: #ff6666;";
             break;
@@ -110,25 +108,26 @@ let convertPrice = (match) => {
         }else{
             dayprice += "Guadagno mensile non settato!";
         }
-    
-        var newNode = null;
-
-        // Create new element and inject content
-        if(document.getElementById("PriceToDay") == null){
-            newNode = document.createElement('div');
-            newNode.className = "PriceToDay";
-            newNode.id = "PriceToDay";
-        }else{
-            newNode = document.getElementById("PriceToDay");
-        }
-
-        newNode.innerHTML = dayprice;
 
         // Reference node
         var referenceNode =  amazon || ali || ebay;
-    
+
+        // InneHTML alternative
+        if(document.getElementById("pricetoday")){
+            let todelete = document.getElementById("pricetoday");
+            todelete.parentNode.removeChild(todelete);
+        }
+
+        const parser = new DOMParser();
+        const parsed = parser.parseFromString(dayprice, `text/html`);
+        const tags = parsed.getElementsByTagName(`body`);
+        tags[0].id = "pricetoday";
+        tags[0].style.background = "white";
+        
         // Insert the new node before the reference node
-        referenceNode.after(newNode);
+        for (const tag of tags) {
+            referenceNode.appendChild(tag)
+        }
     });
 }
 
