@@ -25,6 +25,8 @@ let checks = document.getElementsByClassName("checks");
 
 let updateSettings = () => {
     let locale = (navigator.language || navigator.userLanguage).split("-")[0] || "en";
+    if(locale != "it") locale = "en";
+    
     let matches = document.querySelectorAll("[data-l10n-id]");
     for(var i = 0; i < matches.length; i++){
         matches[i].textContent = translation[locale][matches[i].getAttribute("data-l10n-id")];

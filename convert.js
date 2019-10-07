@@ -13,7 +13,6 @@ let locale_string = {
     }
 }
 
-let userlang = "en";
 let prevStore = null;
 let stores = ["amazon", "aliexpress", "ebay"];
 
@@ -42,6 +41,7 @@ let convertPrice = (match) => {
     var sites = [amazon, ali, ebay];
 
     let locale = (navigator.language || navigator.userLanguage).split("-")[0] || "en";
+    if(locale != "it") locale = "en";
 
     let style = "";
 
