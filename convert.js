@@ -31,6 +31,7 @@ let checkAndConvert = () => {
 }
 
 let convertPrice = (match) => {
+    console.log(match);
     let daily_hour = 8;
 
     // Popular sites DOM element to append our price
@@ -47,8 +48,7 @@ let convertPrice = (match) => {
 
     browser.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {
         console.log(store);
-
-
+        
         if(store.pricetoday_parttime) daily_hour = 4;
 
         sites.forEach((site) => {
@@ -78,7 +78,8 @@ let convertPrice = (match) => {
                 style = "border: 2px solid #ff6666; color: #ff6666;";
             break;
 
-            default: site_fallback();
+            default: 
+                site_fallback();
         }
 
         // Create content
@@ -140,24 +141,25 @@ let convertPrice = (match) => {
         const parsed = parser.parseFromString(dayprice, `text/html`);
         const tags = parsed.getElementsByTagName(`body`);
         tags[0].id = "pricetoday";
-        tags[0].style.background = "white";
+        tags[0].style.background = "transparent";
+        tags[0].style.minHeight = "0px";
         
         // Insert the new node before the reference node
         for (const tag of tags) {
-            referenceNode.appendChild(tag)
+            referenceNode.after(tag)
         }
     });
 }
 
 // Check diff in the storage settings trigger
 let checkDiff = () => {
-    chrome.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {
+    browser.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {
         let acc = 0;
 
         for(var key in store)
             if(prevStore != null && store[key] !== prevStore[key]) acc++
 
-        if(acc > 0) convertPrice();
+        if(acc > 0) checkAndConvert();
 
         prevStore = store;
     });

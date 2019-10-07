@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "PriceToDay",
-    "version": "1.2",
+    "version": "1.4",
   
     "description": "Convert the site prices in lavorative job day, based on personal month revenue :)",
 
