@@ -32,7 +32,7 @@ let updateSettings = () => {
         matches[i].textContent = translation[locale][matches[i].getAttribute("data-l10n-id")];
     }
 
-    chrome.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark']).then((elemt) => {
+    browser.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark']).then((elemt) => {
         if(elemt.pricetoday_rev != null)
             document.getElementById("saved-rev").textContent = elemt.pricetoday_rev;
 
@@ -44,7 +44,7 @@ let updateSettings = () => {
 }
 
 let saveRevenue = (rev) => { 
-    chrome.storage.local.set({'pricetoday_rev': rev})
+    browser.storage.local.set({'pricetoday_rev': rev})
     location.reload(); 
 }
 
@@ -60,7 +60,7 @@ Array.from(checks).forEach((element) => {
 });
 
 onCheckChange = (event) => {
-    chrome.storage.local.set({[`pricetoday_${event.target.id}`]: event.target.checked})
+    browser.storage.local.set({[`pricetoday_${event.target.id}`]: event.target.checked})
     convertPrice();
 }
 

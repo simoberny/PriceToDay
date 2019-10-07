@@ -45,7 +45,7 @@ let convertPrice = (match) => {
 
     let style = "";
 
-    chrome.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {
+    browser.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {
         console.log(store);
 
 
