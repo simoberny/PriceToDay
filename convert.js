@@ -61,7 +61,7 @@ let convertPrice = (match) => {
 
         switch(match){
             case "amazon":
-                var itemPrice = document.getElementById("priceblock_ourprice").textContent;
+                var itemPrice = (document.getElementById("priceblock_ourprice") || document.getElementById("priceblock_dealprice")).textContent;
                 var parts = itemPrice.replace(/\./g, "").split(" ").filter(isNumber);
                 style = "border: 2px solid #88aaaa; color: #88aaaa;";
             break;
