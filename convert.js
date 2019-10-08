@@ -74,7 +74,7 @@ let convertPrice = (match) => {
 
             case "aliexpress":
                 var itemsPrice = document.getElementsByClassName("product-price-value")[0].textContent;            
-                var parts = itemsPrice.replace(/\./g, "").substr(2,itemsPrice.length).split(" - ");
+                var parts = itemsPrice.replace(/\./g, "").split(" - ").filter(isNumber);
                 style = "border: 2px solid #ff6666; color: #ff6666;";
             break;
 
