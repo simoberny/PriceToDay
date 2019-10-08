@@ -32,19 +32,19 @@ let updateSettings = () => {
         matches[i].textContent = translation[locale][matches[i].getAttribute("data-l10n-id")];
     }
 
-    browser.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark']).then((elemt) => {
+    chrome.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (elemt) => {
         if(elemt.pricetoday_rev != null)
             document.getElementById("saved-rev").textContent = elemt.pricetoday_rev;
 
         month.checked = elemt.pricetoday_month;
         part.checked = elemt.pricetoday_parttime;
         noprice.checked = elemt.pricetoday_noprice;
-        dark.checked = elemt.pricetoday_dark;
+        //dark.checked = elemt.pricetoday_dark;
     });
 }
 
 let saveRevenue = (rev) => { 
-    browser.storage.local.set({'pricetoday_rev': rev})
+    chrome.storage.local.set({'pricetoday_rev': rev})
     location.reload(); 
 }
 
@@ -60,8 +60,7 @@ Array.from(checks).forEach((element) => {
 });
 
 onCheckChange = (event) => {
-    browser.storage.local.set({[`pricetoday_${event.target.id}`]: event.target.checked})
-    convertPrice();
+    chrome.storage.local.set({[`pricetoday_${event.target.id}`]: event.target.checked})
 }
 
 updateSettings();

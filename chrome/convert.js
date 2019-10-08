@@ -31,7 +31,6 @@ let checkAndConvert = () => {
 }
 
 let convertPrice = (match) => {
-    console.log(match);
     let daily_hour = 8;
 
     // Popular sites DOM element to append our price
@@ -46,9 +45,7 @@ let convertPrice = (match) => {
 
     let style = "";
 
-    browser.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {
-        console.log(store);
-        
+    chrome.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {        
         if(store.pricetoday_parttime) daily_hour = 4;
 
         sites.forEach((site) => {
@@ -58,23 +55,24 @@ let convertPrice = (match) => {
         
         var moneyperday = store.pricetoday_rev/22; // Daily revenue
         var moneyperhour = moneyperday/daily_hour; // Hour revenue
+        var parts = [];
 
         switch(match){
             case "amazon":
                 var itemPrice = (document.getElementById("priceblock_ourprice") || document.getElementById("priceblock_dealprice")).textContent;
-                var parts = itemPrice.replace(/\./g, "").split(" ").filter(isNumber);
-                style = "border: 2px solid #88aaaa; color: #88aaaa;";
+                parts = itemPrice.split(/[\s\-\$\€\£]+/).filter(isNumber);
+                style = "border: 2px solid #ffcc00; color: #ffcc00;";
             break;
 
             case "ebay":
                 var itemPrice = document.getElementById("prcIsum").textContent;
-                var parts = itemPrice.replace(/\./g, "").split(" ").filter(isNumber);
+                parts = itemPrice.split(/[\s\-\$\€\£]+/).filter(isNumber);
                 style = "border: 2px solid #2255dd; color: #2255dd;";
             break;
 
             case "aliexpress":
-                var itemsPrice = document.getElementsByClassName("product-price-value")[0].textContent;            
-                var parts = itemsPrice.replace(/\./g, "").split(" - ").filter(isNumber);
+                var itemsPrice = document.getElementsByClassName("product-price-value")[0].textContent;       
+                parts = itemsPrice.split(/[\s\-\$\€\£]+/).filter(isNumber);
                 style = "border: 2px solid #ff6666; color: #ff6666;";
             break;
 
@@ -89,7 +87,8 @@ let convertPrice = (match) => {
         if(store.pricetoday_rev){
             for(var i = 0; i < parts.length; i++){
                 if(isNumber(parts[i])){
-                    var dayofwork = (parseFloat(parts[i]) / moneyperday);
+                    var parsedCurrency = convertCurrency(parts[i]);
+                    var dayofwork = (parseFloat(parsedCurrency) / moneyperday);
 
                     var intera = Math.floor(dayofwork);
                     var decimal = dayofwork - intera;
@@ -153,7 +152,7 @@ let convertPrice = (match) => {
 
 // Check diff in the storage settings trigger
 let checkDiff = () => {
-    browser.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {
+    chrome.storage.local.get(['pricetoday_rev', 'pricetoday_parttime', 'pricetoday_month', 'pricetoday_noprice', 'pricetoday_dark'], (store) => {
         let acc = 0;
 
         for(var key in store)
@@ -163,6 +162,20 @@ let checkDiff = () => {
 
         prevStore = store;
     });
+}
+
+let convertCurrency = (value) => {
+    let point_pos = value.indexOf('.');
+    let comma_pos = value.indexOf(',');
+    let parsed_n = '';
+
+    if(point_pos > comma_pos){
+        parsed_n = value.replace(',', '').replace('.', ',');
+    }else{
+        parsed_n = value.replace('.', '');
+    }
+
+    return parsed_n;
 }
 
 let site_fallback = () => console.log("Not yet implemented!");
