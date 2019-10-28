@@ -99,7 +99,7 @@ let convertPrice = (match) => {
                     var mesi = Math.floor(intera/22);
         
                     if(dayofwork < 1){
-                        price = (parseFloat(parts[i]) / moneyperhour).toFixed(2) + " <span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">" + locale_string[locale].hour + "</span>";
+                        price = (ore).toFixed(0) +"."+ (minuti).toFixed(0) + " <span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\">" + locale_string[locale].hour + "</span>";
                     }else if(dayofwork > 29 && store.pricetoday_month){
                         price = mesi
                         + "<span class=\"selection\" style=\"font-size: 14px; color: black; padding: 0 5px;\"> " + locale_string[locale].month + "</span>"
